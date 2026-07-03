@@ -1,6 +1,8 @@
 # Chapter 1 — Ethernet
 
-## The Problem
+You can read my code comments to understand the logic better 
+
+## The Problem 
 
 Imagine ten computers plugged into the same cable. When one sends bits,
 every other machine sees them. How does the right machine know a message
@@ -11,8 +13,8 @@ Ethernet solves all three.
 
 ## What We Built
 
-A complete Ethernet II frame — the envelope that wraps every packet on
-a local network — from scratch in C.
+A complete Ethernet II frame the envelope that wraps every packet on
+a local network from scratch in C.
 
 ## The Frame
 
@@ -28,7 +30,7 @@ Every Ethernet frame is structured like this:
 
 MAC addresses are 48-bit identifiers burned into every NIC at the factory.
 The first 3 bytes identify the manufacturer. The last 3 identify the device.
-`ff:ff:ff:ff:ff:ff` is broadcast — every machine on the segment receives it.
+`ff:ff:ff:ff:ff:ff` is broadcast every machine on the segment receives it.
 
 Minimum payload is 46 bytes because old shared-medium Ethernet needed frames
 to stay on the wire long enough for collision detection to work across the
