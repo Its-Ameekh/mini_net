@@ -3,4 +3,8 @@
 a.out
 *.txt
 .vscode/
+# Ignore Vim swap files
+*.swp
 
+# Ignore compiled binaries/executables
+ethernet
