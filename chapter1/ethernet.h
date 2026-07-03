@@ -23,8 +23,7 @@ void build_frame(
     uint8_t *data,
     uint16_t data_len
 );
-
-
-
 void print_mac(uint8_t mac[6]);
 void print_frame(ethernet_frame *frame);
+void parse_frame(uint8_t *raw_bytes, size_t len, ethernet_frame *out);
+size_t serialize_frame(ethernet_frame *frame, uint8_t *out, uint16_t payload_len);

@@ -1,6 +1,7 @@
 #include "ethernet.h"
-#include<stdint.h>
-#include<stdio.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 
 int main(void) {
     ethernet_frame frame;
@@ -11,6 +12,15 @@ int main(void) {
 
     build_frame(&frame, dest, src, 0x0800, data, sizeof(data));
     print_frame(&frame);
+    
+    uint16_t wire_payload_len = sizeof(data) < 46 ? 46 : sizeof(data);
+
+    uint8_t raw[1518];
+    size_t frame_len = serialize_frame(&frame, raw, wire_payload_len);
+
+    ethernet_frame parsed;
+    printf("parsed frame is under\n");
+    parse_frame(raw, frame_len, &parsed);
 
     return 0;
 }

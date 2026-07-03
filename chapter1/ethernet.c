@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include "ethernet.h"
+#include<string.h>
 #include<arpa/inet.h>
 // Precomputes the 256-entry lookup table using the CRC-32S VAlue(did not understand comeback later)
 void build_crc32_table(uint32_t table[256]) {
@@ -29,6 +30,85 @@ uint32_t compute_crc32(uint8_t *data, size_t length) {
     return crc ^ 0xFFFFFFFF;
 }
 
+void parse_frame(uint8_t *raw_bytes, size_t len, ethernet_frame *out) {
+    printf("\n=== Parsing Incoming Ethernet Frame (%zu bytes) ===\n",len);
+
+    // Minimum frame size check (6 + 6 + 2 + 46 + 4 = 64 bytes)
+    if (len < 64) {
+        printf("[ERROR] Frame too short to be a valid Ethernet frame (%zu bytes).\n", len);
+        return;
+    }
+    if (len > sizeof(ethernet_frame)) {
+        printf("[ERROR] Frame length exceeds maximum structural capacity.\n");
+        return;
+    }
+
+    // Cast raw bytes into the struct layout,possible as bytes are tightly packed in oorder
+    ethernet_frame *incoming = (ethernet_frame *)raw_bytes;
+    //COOL THING TO NOTE and rememmber is that this correctly maps evrythng like macs and etherype
+    //but crc and payload will only be mapped correctly if payload is exactly 1500 bytes or else
+    //the crc being final 4 bytes in incoming data will be consiered as payload
+    //and garbage values from offset 1514,1515,1516,1517 will be taken as crc
+    //below we will fix them
+
+
+    //(total length minus 14 bytes of headers(6+6+2) and 4 bytes of CRC)
+    size_t actual_payload_len = len - 14 - 4;
+
+    // the CRC is at raw_bytes[len - 4]
+    uint32_t wire_crc;
+    memcpy(&wire_crc, &raw_bytes[len - 4], 4);
+
+    // 4. Calculate expected CRC over headers + payload only
+    size_t bytes_to_checksum = len - 4;
+    uint32_t expected_crc = compute_crc32(raw_bytes, bytes_to_checksum);
+
+    //filling output structure for upper layers,out adress we we are storing this incoming raw data
+    //stored in  out ,same as using return remember that rigth?
+    memcpy(out->dest_mac, incoming->dest_mac, 6);
+    memcpy(out->src_mac, incoming->src_mac, 6);
+    out->ethertype = incoming->ethertype; // Keep in network byte order internally...not printing yet so in network format
+    memcpy(out->payload, incoming->payload, actual_payload_len);
+    out->crc = wire_crc;
+
+    // Validation Alert
+    if (wire_crc != expected_crc) {
+        printf("[WARNING] CRC Checksum Mismatch!\n");
+        printf("  -> Wire CRC:     0x%08x\n", wire_crc);
+        printf("  -> Expected CRC: 0x%08x (DATA CORRUPTED)\n", expected_crc);
+    } else {
+        printf("[SUCCESS] CRC Verified! Frame integrity intact (0x%08x).\n", wire_crc);
+        print_frame(out);
+    }
+}
+//this is to make the data send more better suited for all sizes as this makes crc right after 
+//payload
+size_t serialize_frame(ethernet_frame *frame, uint8_t *out, uint16_t wire_payload_len) {
+    size_t offset = 0;
+
+    // Copy Destination MAC (6 bytes)
+    memcpy(out + offset, frame->dest_mac, 6);
+    offset += 6;
+
+    // Copy Source MAC (6 bytes)
+    memcpy(out + offset, frame->src_mac, 6);
+    offset += 6;
+
+    // Copy EtherType (2 bytes)
+    memcpy(out + offset, &frame->ethertype, 2);
+    offset += 2;
+
+    // Copy the payload straight out of the struct. 
+    // No padding logic needed here; build_frame already guaranteed it is at least 46 bytes.
+    memcpy(out + offset, frame->payload, wire_payload_len);
+    offset += wire_payload_len;
+
+    // Append CRC-32 directly after the wire payload
+    memcpy(out + offset, &frame->crc, 4);
+    offset += 4;
+
+    return offset; // Total wire length (e.g., 64 bytes)
+}
 
 void build_frame(
     ethernet_frame *frame,
@@ -62,7 +142,8 @@ void build_frame(
     // Calculate CRC over headers + active payload (offsets 0 up to the CRC boundary)
     size_t bytes_to_checksum = 6 + 6 + 2 + data_len;
     frame->crc = compute_crc32((uint8_t *)frame, bytes_to_checksum);
-
+//in our parse frame we faces trouble as the struct always forces the crc to be from offset 1514 onwards
+//so when we parsed a smaller string it couldnt find the actual crc 
 }
 
 void print_mac(uint8_t mac[6]){
