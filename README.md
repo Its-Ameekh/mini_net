@@ -1,10 +1,13 @@
 # MiniNet — Building the Internet from Scratch in C
 
 This is not a tutorial. It's a ground-up implementation of the entire
-network stack — from raw bit transmission to cloud infrastructure —
-written in C, one protocol at a time.
+network stack from raw bit transmission to cloud infrastructure
+written in C, one protocol at a time,why?cuz  **I DONT WANT PEACE I WANT PROBLEMS**.
 
 Every byte is explained. Nothing is skipped. No black boxes.
+
+AI is only used as a tool to learn concepts I am unfamiliar with, no part of this 
+is "vibe coded".
 
 ## The Idea
 
