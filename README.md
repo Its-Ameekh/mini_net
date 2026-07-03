@@ -1,4 +1,4 @@
-# MiniNet — Building the Internet from Scratch in C
+# MiniNet — Building a Functional Internet Stack from Scratch
 
 This is not a tutorial. It's a ground-up implementation of the entire
 network stack from raw bit transmission to cloud infrastructure
