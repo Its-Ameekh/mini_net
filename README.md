@@ -76,3 +76,15 @@ reviewed line by line, and tested before moving on.
 ## Why
 
 Because understanding only goes as deep as what you've built yourself.
+
+## NOTE
+
+This project is not intended to replace the Linux kernel networking stack.
+
+The goal is educational:
+- understand every protocol
+- implement the core RFCs
+- observe packets on real networks
+- build intuition from first principles
+
+Where practical, implementations intentionally omit production-grade optimizations while preserving protocol correctness.
