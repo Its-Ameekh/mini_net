@@ -47,8 +47,8 @@ Every chapter is load-bearing.
 |---------|-------|--------|
 | 0 | Bit transmission over a Unix pipe | ✅ Done |
 | 1 | Ethernet frames + CRC-32 | ✅ Done |
-| 2 | Ethernet switch (learning table) | 🔨 Next |
-| 3 | ARP | — |
+| 2 | Ethernet switch (learning table) | ✅ Done |
+| 3 | ARP | 🔨 Next |
 | 4 | IPv4 | — |
 | 5 | ICMP + Ping | — |
 | 6 | Routing | — |
