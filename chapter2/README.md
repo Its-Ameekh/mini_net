@@ -11,7 +11,7 @@ and let every machine decide if it's theirs. It works, but it's wasteful.
 A 48-port switch flooding every frame means every packet goes to 47 machines
 that don't want it. That's 98% wasted bandwidth at scale.
 
-A real switch fixes this by *learning* — it watches incoming frames and builds
+A real switch fixes this by *learning* it watches incoming frames and builds
 a map of which MAC address lives on which port. Once it knows, it forwards
 only to the right port.
 
@@ -32,14 +32,14 @@ and sends it out only that port. One port. Not all of them.
 
 ### Flooding
 
-When the destination MAC is unknown — or when it's the broadcast address
+When the destination MAC is unknown or when it's the broadcast address
 `ff:ff:ff:ff:ff:ff` — the switch sends the frame out every port except
 the one it came in on. This is the fallback, not the default.
 
 ### Dropping
 
 If a frame arrives destined for a MAC that lives on the same port it came
-in on, the switch drops it. The destination is already on that segment —
+in on, the switch drops it. The destination is already on that segment
 forwarding would be pointless.
 
 ### Aging
@@ -52,7 +52,7 @@ Every entry has a timestamp. Entries older than `max_age_seconds` are
 evicted. The standard value in real switches is 300 seconds.
 
 When an entry is evicted, we swap it with the last entry and decrement
-count — O(1) deletion with no shifting. Order in the table doesn't matter
+count O(1) deletion with no shifting. Order in the table doesn't matter
 because lookup is always a linear scan anyway.
 
 ## The Three Outcomes
@@ -90,14 +90,14 @@ typedef struct forwarding_table {
 } forwarding_table;
 ```
 
-Maximum 1024 entries — a deliberate cap. When the table is full and a new
+Maximum 1024 entries a deliberate cap. When the table is full and a new
 MAC arrives, we evict the oldest entry to make room. This is a simplified
 eviction policy; real switches use more sophisticated CAM hardware.
 
 ## Design Decisions
 
 **Linear scan for lookup.** With 1024 entries worst case this is fine.
-A production switch uses a CAM (Content Addressable Memory) — hardware
+A production switch uses a CAM (Content Addressable Memory) hardware
 that searches all entries in parallel in a single clock cycle. We don't
 have CAM, so we scan. Known limitation.
 
