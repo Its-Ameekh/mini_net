@@ -29,3 +29,5 @@ void swap_expired(forwarding_table *t,int index);
 void table_age(forwarding_table *t, uint32_t max_age_seconds);
 
 void switch_process_frame(forwarding_table *t,ethernet_frame *frame,uint8_t in_port,uint8_t num_ports);
+
+static int find_oldest(forwarding_table *t);

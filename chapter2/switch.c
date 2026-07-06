@@ -28,7 +28,7 @@ void swap_expired(forwarding_table *t,int index){
     t->count--;
 }
 
-int find_oldest(forwarding_table *t){
+static int find_oldest(forwarding_table *t){
     int oldest=0;
     time_t time_now=time(NULL);
     time_t max_age=time_now-t->table[0].last_seen;
