@@ -2,11 +2,11 @@
 
 ## The Problem
 
-Chapter 1 gave us Ethernet frames — envelopes with a destination MAC address.
+Chapter 1 gave us Ethernet frames envelopes with a destination MAC address.
 But knowing *who* a frame is addressed to is useless if you don't know *where*
 to send it.
 
-The naive solution is flooding — when a frame arrives, send it out every port
+The naive solution is flooding when a frame arrives, send it out every port
 and let every machine decide if it's theirs. It works, but it's wasteful.
 A 48-port switch flooding every frame means every packet goes to 47 machines
 that don't want it. That's 98% wasted bandwidth at scale.
